@@ -1,0 +1,8 @@
+.env
+backend/data/memory_store.json
+backend/data/connector_tokens.json
+node_modules/
+frontend/dist/
+__pycache__/
+*.pyc
+.DS_Store
