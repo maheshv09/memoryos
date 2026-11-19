@@ -40,9 +40,9 @@ services:
       - key: ATLASSIAN_CLIENT_SECRET
         sync: false
       - key: PUBLIC_BASE_URL
-        value: https://memoryos-backend.onrender.com
+        value: https://memoryos-backend-sz0y.onrender.com
       - key: FRONTEND_URL
-        value: https://memoryos-frontend.onrender.com
+        value: https://memoryos-frontend-f7jm.onrender.com
       - key: PYTHON_VERSION
         value: "3.11.9"
 
@@ -54,6 +54,6 @@ services:
     staticPublishPath: dist
     envVars:
       - key: VITE_API_BASE_URL
-        value: https://memoryos-backend.onrender.com
+        value: https://memoryos-backend-sz0y.onrender.com
       - key: VITE_SALES_EMAIL
         value: hello@memoryos.ai
