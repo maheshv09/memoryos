@@ -17,9 +17,11 @@ except Exception:
 from fastapi import FastAPI, File, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from connectors import ConnectorManager
+from google_ai import status as google_ai_status
 from llm_router import route_completion
 from memory_engine import MemoryEngine
 from models import (
@@ -449,6 +451,17 @@ async def demo_ingest(persona: PersonaId, era: int = 2026):
     return {"ingested": len(created), "memory_ids": created, "persona": persona}
 
 
+@app.get("/google-ai/status")
+async def google_ai_stack_status():
+    return google_ai_status()
+
+
 @app.get("/stats")
 async def stats():
     return engine.stats()
+
+
+# Single-container deployment (Cloud Run): serve the built frontend when present.
+FRONTEND_DIST = BASE_DIR.parent / "frontend" / "dist"
+if FRONTEND_DIST.exists():
+    app.mount("/", StaticFiles(directory=str(FRONTEND_DIST), html=True), name="frontend")

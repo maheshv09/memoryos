@@ -1,0 +1,33 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "${_IMAGE}", "."]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "${_IMAGE}"]
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - "${_SERVICE_NAME}"
+      - --image=${_IMAGE}
+      - --region=${_REGION}
+      - --platform=managed
+      - --allow-unauthenticated
+      - --min-instances=0
+      - --max-instances=3
+      - --memory=512Mi
+      - --cpu=1
+      - --set-env-vars=PYTHON_VERSION=3.11.9,PORT=8080
+
+images:
+  - "${_IMAGE}"
+
+substitutions:
+  _PROJECT_ID: "__REPLACE_PROJECT_ID__"
+  _REGION: "__REPLACE_REGION__"
+  _SERVICE_NAME: "memoryos"
+  _IMAGE: "gcr.io/__REPLACE_PROJECT_ID__/memoryos:latest"
+
+options:
+  logging: GCS_ONLY
+  dynamicSubstitutions: false

@@ -81,6 +81,40 @@ The app includes a **Business & Pricing** view from the Navbar. It covers:
 
 Pricing copy and plan definitions live in `frontend/src/components/PricingModal.tsx` and are intentionally easy to configure per deployment.
 
+The Navbar **Battlecard** button opens a sales-oriented view that positions MemoryOS against M365 Copilot, ChatGPT/Claude + MCP, Glean, and Notion AI, with USPs, objection kills, and the pilot CTA.
+
+## Google AI stack
+
+MemoryOS reports its Google AI integration depth at `/google-ai/status`. The UI surfaces the same stack in the right rail under **Insights → Google AI stack**:
+
+- Gemini for primary reasoning and retrieval grounding
+- Gemini Live-ready voice interface
+- Gemma via Vertex AI when enterprise controls are enabled
+- Vertex AI for project, region, VPC-SC, audit logs, and residency controls
+- Google AI Studio credential family
+- Agent Skills / MCP readiness for connecting assistants to MemoryOS as memory infrastructure
+
+Set `VERTEXAI_PROJECT` and `VERTEXAI_LOCATION` to enable Vertex AI routes when you deploy on Google Cloud.
+
+## Google Cloud deployment bundle
+
+A ready-to-run Google Cloud configuration lives in `deploy/gcp/`:
+
+- `Dockerfile` — multi-stage build; serves the API and built frontend from one Cloud Run container
+- `cloudbuild.yaml` — build, push, and deploy pipeline
+- `deploy.sh` — enables APIs and runs the deployment
+- `README.md` — placeholders and deployment instructions
+
+When Google Cloud credits are available, replace `__REPLACE_PROJECT_ID__`, `__REPLACE_REGION__`, and any secret env vars, then run:
+
+```bash
+export PROJECT_ID="your-project-id"
+export REGION="us-central1"
+./deploy/gcp/deploy.sh
+```
+
+Do not commit secrets. Prefer Secret Manager attachments for API keys and OAuth client secrets.
+
 ## Deployment on Render.com (free tier)
 
 This repo includes `render.yaml`:

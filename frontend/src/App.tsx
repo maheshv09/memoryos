@@ -9,6 +9,7 @@ import CrystallizerModal from "./components/CrystallizerModal";
 import MemoryDetailDrawer from "./components/MemoryDetailDrawer";
 import IntelRail from "./components/IntelRail";
 import PricingModal from "./components/PricingModal";
+import BattlecardModal from "./components/BattlecardModal";
 import { apiFetch, checkHealth } from "./lib/api";
 import type { GraphResponse, Memory, PersonaId, ProviderTelemetry } from "./types/memory";
 
@@ -36,6 +37,7 @@ export default function App() {
   const [showCrystallizer, setShowCrystallizer] = useState(false);
   const [showConnectors, setShowConnectors] = useState(false);
   const [showPricing, setShowPricing] = useState(false);
+  const [showBattlecard, setShowBattlecard] = useState(false);
   const [insights, setInsights] = useState<any>(null);
   const [activity, setActivity] = useState<any[]>([]);
   const [memoryOfDay, setMemoryOfDay] = useState<Memory | null>(null);
@@ -149,6 +151,7 @@ export default function App() {
         stats={stats}
         telemetry={telemetry}
         onOpenPricing={() => setShowPricing(true)}
+        onOpenBattlecard={() => setShowBattlecard(true)}
       />
 
       <div className="relative h-[calc(100vh-7rem)] overflow-x-auto overflow-y-hidden">
@@ -247,6 +250,7 @@ export default function App() {
             narrative={narrative}
             onOpenMemory={openMemory}
             onOpenPricing={() => setShowPricing(true)}
+            onOpenBattlecard={() => setShowBattlecard(true)}
             onWeave={weave}
           />
         </motion.section>
@@ -260,7 +264,8 @@ export default function App() {
       />
 
       <AnimatePresence>
-        {showPricing && <PricingModal onClose={() => setShowPricing(false)} />}
+        {showPricing && <PricingModal onClose={() => setShowPricing(false)} onOpenBattlecard={() => { setShowPricing(false); setShowBattlecard(true); }} />}
+        {showBattlecard && <BattlecardModal onClose={() => setShowBattlecard(false)} />}
         {showConnectors && (
           <WorkflowStudio
             persona={persona}

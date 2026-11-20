@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Activity,
@@ -30,6 +30,7 @@ interface Props {
   narrative: string;
   onOpenMemory: (id: string) => void;
   onOpenPricing: () => void;
+  onOpenBattlecard: () => void;
   onWeave: () => void;
 }
 
@@ -53,11 +54,19 @@ export default function IntelRail({
   narrative,
   onOpenMemory,
   onOpenPricing,
+  onOpenBattlecard,
   onWeave,
 }: Props) {
   const [tab, setTab] = useState<Tab>("signals");
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
+  const [aiStatus, setAiStatus] = useState<any>(null);
+
+  useEffect(() => {
+    apiFetch<any>("/google-ai/status")
+      .then(setAiStatus)
+      .catch(() => setAiStatus(null));
+  }, []);
 
   const search = async () => {
     if (!query.trim()) return;
@@ -209,6 +218,29 @@ export default function IntelRail({
 
         {tab === "insights" && (
           <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+            <div className="rounded-2xl border border-accent/20 bg-gradient-to-br from-accent/12 to-champagne/8 p-4">
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">
+                  <Sparkles className="h-3 w-3 text-champagne" /> Google AI stack
+                </div>
+                <span className={`h-1.5 w-1.5 rounded-full ${aiStatus?.gemini_configured ? "bg-emerald-400" : "bg-amber-400"}`} />
+              </div>
+              <div className="grid grid-cols-2 gap-1.5">
+                {(aiStatus?.stack || []).map((item: any) => (
+                  <div key={item.id} className="rounded-xl border border-white/10 bg-black/20 px-2.5 py-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="truncate text-[10px] font-medium text-white/75">{item.name}</span>
+                      <span className={`shrink-0 rounded-full px-1.5 py-0.5 text-[8px] uppercase tracking-wide ${item.configured ? "bg-emerald-400/15 text-emerald-300" : "bg-white/10 text-white/30"}`}>
+                        {item.tier}
+                      </span>
+                    </div>
+                    <div className="mt-1 line-clamp-2 text-[9px] leading-snug text-white/35">{item.role}</div>
+                  </div>
+                ))}
+              </div>
+              {!aiStatus && <div className="text-[10px] text-white/30">Loading Google AI status…</div>}
+            </div>
+
             <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
               <div className="relative h-[76px] w-[76px] shrink-0">
                 <svg viewBox="0 0 72 72" className="h-full w-full -rotate-90">
@@ -341,6 +373,21 @@ export default function IntelRail({
                   <span className="font-mono text-champagne/90">{price}</span>
                 </div>
               ))}
+            </div>
+
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+              <div className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/35">The edge</div>
+              <ul className="space-y-1.5 text-[11px] leading-snug text-white/60">
+                <li>· Memory lives in your firm, not a model vendor</li>
+                <li>· Client isolation + citations + audit trail</li>
+                <li>· Gemini / Vertex-ready, MCP-native, self-host capable</li>
+              </ul>
+              <button
+                onClick={onOpenBattlecard}
+                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-accent/30 bg-accent/10 px-3 py-2 text-[11px] font-medium text-accent transition hover:bg-accent/15"
+              >
+                Open sales battlecard <ArrowUpRight className="h-3.5 w-3.5" />
+              </button>
             </div>
 
             <button

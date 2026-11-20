@@ -1,0 +1,13 @@
+.git
+.github
+.env
+*.env
+!deploy/gcp/*.example
+backend/data
+**/__pycache__
+*.pyc
+frontend/node_modules
+frontend/dist
+dist
+node_modules
+.DS_Store

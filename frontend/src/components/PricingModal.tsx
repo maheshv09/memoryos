@@ -18,9 +18,11 @@ import {
   X,
   Zap,
 } from "lucide-react";
+import { apiFetch } from "../lib/api";
 
 interface Props {
   onClose: () => void;
+  onOpenBattlecard?: () => void;
 }
 
 type Billing = "annual" | "monthly";
@@ -235,9 +237,10 @@ function NumberField({
   );
 }
 
-export default function PricingModal({ onClose }: Props) {
+export default function PricingModal({ onClose, onOpenBattlecard }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [billing, setBilling] = useState<Billing>("annual");
+  const [aiStatus, setAiStatus] = useState<any>(null);
   const [teamSize, setTeamSize] = useState(20);
   const [hourlyRate, setHourlyRate] = useState(75);
   const [hoursSaved, setHoursSaved] = useState(3);
@@ -252,6 +255,12 @@ export default function PricingModal({ onClose }: Props) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
+
+  useEffect(() => {
+    apiFetch<any>("/google-ai/status")
+      .then(setAiStatus)
+      .catch(() => setAiStatus(null));
+  }, []);
 
   const roi = useMemo(() => {
     const annualProductivity = teamSize * hoursSaved * hourlyRate * 48;
@@ -328,6 +337,14 @@ export default function PricingModal({ onClose }: Props) {
                 >
                   See paid plans
                 </button>
+                {onOpenBattlecard && (
+                  <button
+                    onClick={onOpenBattlecard}
+                    className="rounded-xl border border-accent/20 bg-accent/5 px-5 py-3 text-sm font-medium text-accent transition hover:bg-accent/10"
+                  >
+                    Open sales battlecard
+                  </button>
+                )}
               </div>
               <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-slate-500">
                 <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-emerald-500" /> No credit card for the free trial</span>
@@ -630,6 +647,34 @@ export default function PricingModal({ onClose }: Props) {
                   </ul>
                 </div>
               </div>
+            </div>
+          </section>
+
+          <section className="mt-14 rounded-[2rem] border border-slate-200 bg-white/60 p-6 shadow-lift">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-champagne">Google AI stack</div>
+                <h3 className="mt-2 font-serif text-4xl text-slate-900">Built on Google AI, not locked to it.</h3>
+                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">
+                  Gemini powers reasoning today. Vertex AI and Gemma are ready for enterprise controls. The platform can also sit underneath other assistants via MCP.
+                </p>
+              </div>
+              <span className={`rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] ${aiStatus?.gemini_configured ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
+                {aiStatus?.gemini_configured ? "Gemini configured" : "Gemini key pending"}
+              </span>
+            </div>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {(aiStatus?.stack || []).map((item: any) => (
+                <div key={item.id} className="rounded-2xl border border-slate-200 bg-white/70 p-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="text-sm font-semibold text-slate-900">{item.name}</div>
+                    <span className={`rounded-full px-2 py-0.5 text-[9px] font-medium uppercase tracking-wide ${item.configured ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
+                      {item.tier}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-xs leading-relaxed text-slate-600">{item.role}</p>
+                </div>
+              ))}
             </div>
           </section>
 

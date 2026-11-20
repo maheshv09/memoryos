@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Brain, Gem, Radio, Sparkles } from "lucide-react";
+import { Brain, Gem, Radio, Sparkles, Target } from "lucide-react";
 import type { PersonaId } from "../types/memory";
 
 interface NavbarProps {
@@ -9,6 +9,7 @@ interface NavbarProps {
   stats?: { total: number; personal: number; enterprise: number };
   telemetry?: { provider: string; model: string; latency_ms: number } | null;
   onOpenPricing: () => void;
+  onOpenBattlecard: () => void;
 }
 
 const PERSONAS: { id: PersonaId; label: string; subtitle: string }[] = [
@@ -16,7 +17,7 @@ const PERSONAS: { id: PersonaId; label: string; subtitle: string }[] = [
   { id: "enterprise", label: "Arjun Mehta", subtitle: "Enterprise Knowledge Twin" },
 ];
 
-export default function Navbar({ persona, onPersonaChange, healthStatus, stats, telemetry, onOpenPricing }: NavbarProps) {
+export default function Navbar({ persona, onPersonaChange, healthStatus, stats, telemetry, onOpenPricing, onOpenBattlecard }: NavbarProps) {
   return (
     <header className="fixed left-1/2 top-4 z-50 w-[min(1320px,calc(100%-2rem))] -translate-x-1/2">
       <div className="panel-soft flex items-center gap-4 rounded-[1.6rem] px-4 py-3">
@@ -52,6 +53,12 @@ export default function Navbar({ persona, onPersonaChange, healthStatus, stats, 
         </div>
 
         <div className="ml-auto flex items-center gap-2.5">
+          <button
+            onClick={onOpenBattlecard}
+            className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3.5 py-2 text-[11px] font-semibold text-white/60 transition hover:border-accent/40 hover:text-white sm:flex"
+          >
+            <Target className="h-3.5 w-3.5" /> Battlecard
+          </button>
           <button
             onClick={onOpenPricing}
             className="flex items-center gap-2 rounded-full border border-champagne/30 bg-gradient-to-r from-champagne/15 to-accent/10 px-3.5 py-2 text-[11px] font-semibold text-champagne transition hover:border-champagne/50 hover:text-white"
