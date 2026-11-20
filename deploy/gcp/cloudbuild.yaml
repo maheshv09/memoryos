@@ -1,6 +1,6 @@
 steps:
   - name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "${_IMAGE}", "."]
+    args: ["build", "-f", "deploy/gcp/Dockerfile", "-t", "${_IMAGE}", "."]
   - name: "gcr.io/cloud-builders/docker"
     args: ["push", "${_IMAGE}"]
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
@@ -17,14 +17,14 @@ steps:
       - --max-instances=3
       - --memory=512Mi
       - --cpu=1
-      - --set-env-vars=PYTHON_VERSION=3.11.9,PORT=8080
+      - --set-env-vars=PYTHON_VERSION=3.11.9,PORT=8080,VERTEXAI_PROJECT=${_PROJECT_ID},VERTEXAI_LOCATION=${_REGION}
 
 images:
   - "${_IMAGE}"
 
 substitutions:
   _PROJECT_ID: "__REPLACE_PROJECT_ID__"
-  _REGION: "__REPLACE_REGION__"
+  _REGION: "us-central1"
   _SERVICE_NAME: "memoryos"
   _IMAGE: "gcr.io/__REPLACE_PROJECT_ID__/memoryos:latest"
 

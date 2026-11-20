@@ -46,24 +46,24 @@ const SALES_EMAIL = import.meta.env.VITE_SALES_EMAIL || "hello@memoryos.ai";
 const PLANS: Plan[] = [
   {
     id: "personal",
-    name: "Personal",
-    tagline: "A private memory for one person.",
+    name: "Personal Legacy",
+    tagline: "A private digital consciousness for one individual & family.",
     free: true,
     unit: "free forever",
     cta: "Start free",
     features: [
-      "1 personal workspace",
-      "3 connectors",
-      "2,500 memories",
-      "Semantic search + graph",
-      "Provenance-backed answers",
-      "JSON export",
+      "1 Personal Legacy Twin",
+      "WhatsApp, Gmail, Notes & Voice",
+      "2,500 memory engrams",
+      "2050 Time-Capsule queries",
+      "Provenance-backed citations",
+      "Full JSON vault export",
     ],
   },
   {
     id: "team",
-    name: "Team",
-    tagline: "For 5–25 person client teams.",
+    name: "Team Twin",
+    tagline: "For 5–25 person engineering & advisory teams.",
     annual: 29,
     monthly: 39,
     unit: "per user / month",
@@ -71,49 +71,48 @@ const PLANS: Plan[] = [
     featured: true,
     features: [
       "5–25 seats",
-      "10 connectors",
-      "50,000 memories",
-      "Shared client workspaces",
-      "Commitment + decision timelines",
-      "Handoff briefs",
-      "Audit basics + provenance",
+      "All 19 connectors included",
+      "50,000 memory engrams",
+      "Shared client & project workspaces",
+      "ADR & incident decision timelines",
+      "Automated retirement handoff briefs",
+      "Gemma 3 Edge PII redaction",
       "Priority support",
     ],
   },
   {
     id: "business",
     name: "Business",
-    tagline: "For firms that need control.",
+    tagline: "For firms preserving institutional knowledge at scale.",
     annual: 49,
     monthly: 65,
     unit: "per user / month",
     cta: "Talk to sales",
     features: [
-      "25–100 seats",
-      "Unlimited connectors",
-      "500,000 memories",
-      "SSO + role-based access",
-      "Client isolation + retention",
-      "Full audit log",
-      "Custom memory schemas",
-      "99.9% uptime target",
+      "25–250 seats",
+      "Unlimited connectors & syncs",
+      "500,000 memory engrams",
+      "SSO + role-based ACLs",
+      "Client isolation + retention rules",
+      "Immutable compliance audit log",
+      "Google Agent Skills (MCP) server",
+      "99.9% uptime SLA",
     ],
   },
   {
     id: "enterprise",
-    name: "Enterprise",
-    tagline: "For regulated and large teams.",
+    name: "Enterprise (Barclays Tier)",
+    tagline: "For regulated banks, defence, and global enterprises.",
     custom: true,
     unit: "annual contract",
     cta: "Book a pilot",
     features: [
-      "Self-hosted or VPC",
-      "DLP + legal hold",
-      "Data residency",
-      "Custom connectors",
-      "Dedicated solutions engineer",
-      "Security review + SLA",
-      "White-glove onboarding",
+      "Google Cloud VPC or Self-Hosted",
+      "Vertex AI + private Gemma 3 weights",
+      "DLP + legal hold + regional residency",
+      "Veteran employee retirement twin builder",
+      "Dedicated solutions architect",
+      "SOC2 / ISO-27001 / FCA audit package",
     ],
   },
 ];
@@ -123,59 +122,25 @@ const VALUE_CARDS = [
     icon: Clock,
     stat: "3.5 hrs",
     label: "saved per person / week",
-    copy: "Stop re-reading email, docs, and old chats to reconstruct client context.",
+    copy: "Stop digging through years of Slack, Gmail, and Jira to reconstruct why an architectural decision was made.",
   },
   {
     icon: Users,
     stat: "60% faster",
-    label: "new-account onboarding",
-    copy: "A new lead gets the client timeline, decisions, risks, and promises in one brief.",
+    label: "veteran handover & onboarding",
+    copy: "When a 30-year veteran retires, their successor inherits an interactive Knowledge Twin with every invariant intact.",
   },
   {
     icon: BadgeCheck,
     stat: "0 lost",
-    label: "commitments and decisions",
-    copy: "Every promise gets an owner, a source, and a date — not a forgotten Slack thread.",
+    label: "commitments and postmortems",
+    copy: "Every promise, outage lesson, and boundary owner carries an immutable source citation and date.",
   },
   {
     icon: ShieldCheck,
     stat: "Audit-ready",
     label: "by design",
-    copy: "Provenance, redaction, retention, and client isolation are built into the memory layer.",
-  },
-];
-
-const INCLUDED = [
-  "Normalized ingestion",
-  "PII redaction",
-  "Provenance + citations",
-  "Hybrid retrieval",
-  "Knowledge graph",
-  "Client workspaces",
-  "Export + delete",
-  "Model-neutral memory",
-];
-
-const FAQS = [
-  {
-    q: "Can we just connect ChatGPT or Claude with MCP?",
-    a: "You can, and for one person it is a great setup. MCP gives a model access to tools. It does not give your firm a shared memory system with client isolation, audit logs, retention, handoffs, or a system of record. MemoryOS can itself run as an MCP server, so your team keeps ChatGPT or Claude while the firm keeps control of the memory underneath.",
-  },
-  {
-    q: "What exactly is the trial pack?",
-    a: "The trial pack is a 14-day Client Memory Audit. We connect three sources for one client, ingest up to 12 months of history, and deliver a commitments-and-decisions report, a new-joiner handoff brief, and an ROI review. It is $3,000 and fully credited toward your annual plan if you continue.",
-  },
-  {
-    q: "Is our data used to train models?",
-    a: "No. MemoryOS does not use customer data to train models. Model calls are stateless and receive only the redacted context needed for the request. Enterprise customers can run MemoryOS inside their own VPC so data never leaves their environment.",
-  },
-  {
-    q: "Can we self-host?",
-    a: "Yes, on Enterprise. MemoryOS can run in your VPC or on-premises environment with your own storage, keys, and model endpoints. Business and Team run in the managed cloud with SSO, role-based access, and audit logs.",
-  },
-  {
-    q: "What happens after the trial?",
-    a: "You choose a plan, keep the client workspace, and the $3,000 audit fee is credited to your first annual contract. If you do not continue, we export or delete your data on request and confirm deletion in writing.",
+    copy: "Gemma 3 Edge PII redaction, provenance citations, and workspace isolation are built into the ingestion pipeline.",
   },
 ];
 
@@ -190,7 +155,7 @@ function money(value: number): string {
 function requestPlan(plan: string) {
   const subject = encodeURIComponent(`MemoryOS — ${plan} request`);
   const body = encodeURIComponent(
-    `Hi MemoryOS team,\n\nWe would like to discuss the ${plan}.\n\nTeam size:\nPrimary use case:\nCurrent tools:\nTimeline:\n\nThanks.`
+    `Hi MemoryOS team,\n\nWe would like to discuss the ${plan}.\n\nTeam size:\nPrimary use case:\nTimeline:\n\nThanks.`
   );
   window.location.href = `mailto:${SALES_EMAIL}?subject=${subject}&body=${body}`;
 }
@@ -215,10 +180,10 @@ function NumberField({
   suffix?: string;
 }) {
   return (
-    <label className="block rounded-2xl border border-slate-200 bg-white/70 px-4 py-3">
-      <span className="mb-2 flex items-center justify-between gap-3 text-xs text-slate-600">
+    <label className="block rounded-2xl border border-white/10 bg-black/40 px-4 py-3">
+      <span className="mb-2 flex items-center justify-between gap-3 text-xs text-white/65">
         <span>{label}</span>
-        <span className="font-mono text-sm text-slate-900">
+        <span className="font-mono text-sm font-semibold text-champagne">
           {prefix}
           {value}
           {suffix}
@@ -231,7 +196,7 @@ function NumberField({
         step={step}
         value={value}
         onChange={(event) => onChange(Number(event.target.value))}
-        className="w-full accent-[#5b5bd6]"
+        className="w-full accent-[#d4af37]"
       />
     </label>
   );
@@ -241,11 +206,11 @@ export default function PricingModal({ onClose, onOpenBattlecard }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [billing, setBilling] = useState<Billing>("annual");
   const [aiStatus, setAiStatus] = useState<any>(null);
-  const [teamSize, setTeamSize] = useState(20);
-  const [hourlyRate, setHourlyRate] = useState(75);
-  const [hoursSaved, setHoursSaved] = useState(3);
-  const [onboardingWeeks, setOnboardingWeeks] = useState(3);
-  const [newHires, setNewHires] = useState(4);
+  const [teamSize, setTeamSize] = useState(25);
+  const [hourlyRate, setHourlyRate] = useState(85);
+  const [hoursSaved, setHoursSaved] = useState(3.5);
+  const [onboardingWeeks, setOnboardingWeeks] = useState(4);
+  const [newHires, setNewHires] = useState(6);
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
@@ -282,275 +247,186 @@ export default function PricingModal({ onClose, onOpenBattlecard }: Props) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-[60] flex flex-col bg-[#f7f3ec]/95 backdrop-blur-2xl"
+      className="fixed inset-0 z-[70] flex flex-col bg-[#060812]/96 text-white backdrop-blur-2xl"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       role="dialog"
       aria-modal="true"
-      aria-label="MemoryOS business value and pricing"
     >
-      <div className="flex items-center justify-between border-b border-white/70 bg-white/55 px-6 py-4 backdrop-blur-xl">
+      <div className="flex items-center justify-between border-b border-white/10 bg-black/40 px-6 py-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-champagne text-white shadow-lift">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-accent to-champagne text-white shadow-lg shadow-accent/25">
             <Gem className="h-5 w-5" />
           </div>
           <div>
-            <div className="text-xs font-medium uppercase tracking-[0.26em] text-slate-500">Business & Pricing</div>
-            <h2 className="font-serif text-2xl text-slate-900">The Client Memory Layer</h2>
+            <div className="text-xs font-medium uppercase tracking-[0.26em] text-champagne">
+              Business Model &amp; Enterprise ROI
+            </div>
+            <h2 className="font-serif text-2xl text-white">
+              The Operating System for Human &amp; Institutional Knowledge
+            </h2>
           </div>
         </div>
         <button
           onClick={onClose}
-          className="rounded-full border border-slate-200 bg-white/80 p-2 text-slate-500 transition hover:text-slate-900"
-          aria-label="Close pricing"
+          className="rounded-full border border-white/15 bg-white/5 p-2 text-white/60 transition hover:bg-white/10 hover:text-white"
         >
           <X className="h-4 w-4" />
         </button>
       </div>
 
-      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto scrollbar-thin">
+      <div ref={scrollRef} className="scrollbar-dark min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto max-w-[1280px] px-6 py-10">
+          {/* Hero */}
           <section className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-stretch">
             <div className="flex flex-col justify-center">
               <div className="mb-4 inline-flex w-fit items-center gap-2 rounded-full border border-champagne/30 bg-champagne/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-champagne">
-                <Sparkles className="h-3.5 w-3.5" /> Memory that pays for itself
+                <Sparkles className="h-3.5 w-3.5" /> Multi-Billion Dollar Category
               </div>
-              <h3 className="max-w-3xl font-serif text-5xl leading-[0.95] text-slate-900 md:text-6xl">
-                One recovered client engagement pays for the year.
+              <h3 className="max-w-3xl font-serif text-5xl leading-[0.98] text-white md:text-6xl">
+                Every human and every enterprise becomes a customer.
               </h3>
-              <p className="mt-5 max-w-2xl text-base leading-relaxed text-slate-600">
-                MemoryOS gives consultancies, agencies, and advisory firms a shared, auditable memory for every client.
-                It connects email, docs, chat, and meetings, then answers what was promised, what changed, and who knows —
-                with citations your team can defend.
+              <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/65">
+                When a 30-year veteran engineer at Barclays retires, or when a grandfather wants his wisdom accessible to his grandson in 2050, generic chatbots fail. MemoryOS turns decades of emails, WhatsApp chats, ADRs, and voice notes into a living, cited Digital Consciousness Twin.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <button
-                  onClick={() => requestPlan("Client Memory Audit")}
-                  className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent to-champagne px-5 py-3 text-sm font-medium text-white shadow-lift transition hover:scale-[1.01]"
+                  onClick={() => requestPlan("Enterprise Knowledge Twin Pilot ($3k Audit)")}
+                  className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-accent to-champagne px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-accent/25 transition hover:scale-[1.01]"
                 >
-                  Book the $3k audit <ArrowRight className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => document.getElementById("pricing-plans")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-                  className="rounded-xl border border-slate-200 bg-white/80 px-5 py-3 text-sm font-medium text-slate-700 transition hover:bg-white"
-                >
-                  See paid plans
+                  Book the $3k Enterprise Pilot <ArrowRight className="h-4 w-4" />
                 </button>
                 {onOpenBattlecard && (
                   <button
                     onClick={onOpenBattlecard}
-                    className="rounded-xl border border-accent/20 bg-accent/5 px-5 py-3 text-sm font-medium text-accent transition hover:bg-accent/10"
+                    className="rounded-xl border border-champagne/40 bg-champagne/15 px-5 py-3 text-sm font-semibold text-champagne transition hover:bg-champagne/25"
                   >
-                    Open sales battlecard
+                    Open Competitive Sales Battlecard
                   </button>
                 )}
               </div>
-              <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-slate-500">
-                <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-emerald-500" /> No credit card for the free trial</span>
-                <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-emerald-500" /> Data export + deletion</span>
-                <span className="flex items-center gap-1.5"><Check className="h-3.5 w-3.5 text-emerald-500" /> Self-host available</span>
-              </div>
             </div>
 
-            <div className="glass relative overflow-hidden rounded-[2rem] p-6 shadow-lift">
-              <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-champagne/20 blur-3xl" />
-              <div className="relative">
-                <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-400">Value snapshot</div>
-                <div className="mt-3 font-serif text-3xl text-slate-900">What changes in week one</div>
-                <div className="mt-6 space-y-3">
-                  {[
-                    ["Context recovery", "3.5 hrs / person / week"],
-                    ["New-account ramp", "60% faster"],
-                    ["Commitment leakage", "Near zero"],
-                    ["Answers with sources", "100% cited"],
-                  ].map(([label, value]) => (
-                    <div key={label} className="flex items-center justify-between rounded-2xl border border-white/80 bg-white/70 px-4 py-3 text-sm">
-                      <span className="text-slate-600">{label}</span>
-                      <span className="font-mono text-slate-900">{value}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-5 rounded-2xl border border-accent/15 bg-gradient-to-br from-accent/10 to-champagne/10 p-4 text-xs leading-relaxed text-slate-600">
-                  Built for client-facing teams: consultancies, agencies, advisory firms, executive search, and professional services.
-                </div>
+            <div className="panel-soft relative overflow-hidden rounded-[2rem] p-6">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-champagne">
+                Dual-Engine Go-To-Market
+              </div>
+              <div className="mt-2 font-serif text-3xl text-white">B2C Legacy + B2B Enterprise Twins</div>
+              <div className="mt-5 space-y-3">
+                {[
+                  ["Context recovery", "3.5 hrs / engineer / week"],
+                  ["Veteran retirement ramp", "60% faster handover"],
+                  ["Commitment & ADR leakage", "Near zero"],
+                  ["Provenance & citations", "100% grounded"],
+                ].map(([label, value]) => (
+                  <div
+                    key={label}
+                    className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-sm"
+                  >
+                    <span className="text-white/65">{label}</span>
+                    <span className="font-mono font-semibold text-champagne">{value}</span>
+                  </div>
+                ))}
               </div>
             </div>
           </section>
 
-          <section className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {/* Value Cards */}
+          <section className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {VALUE_CARDS.map((card) => {
               const Icon = card.icon;
               return (
-                <div key={card.label} className="glass rounded-[1.8rem] p-5 shadow-lift">
-                  <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-accent/10 text-accent">
+                <div key={card.label} className="panel-soft rounded-[1.6rem] p-5">
+                  <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-accent/15 text-accent">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <div className="font-serif text-3xl text-slate-900">{card.stat}</div>
-                  <div className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-champagne">{card.label}</div>
-                  <p className="mt-3 text-sm leading-relaxed text-slate-600">{card.copy}</p>
+                  <div className="font-serif text-3xl text-gradient-gold">{card.stat}</div>
+                  <div className="mt-1 text-xs font-semibold uppercase tracking-[0.16em] text-white/80">
+                    {card.label}
+                  </div>
+                  <p className="mt-2.5 text-xs leading-relaxed text-white/55">{card.copy}</p>
                 </div>
               );
             })}
           </section>
 
+          {/* Interactive ROI Calculator */}
           <section className="mt-12 grid gap-6 lg:grid-cols-[1fr_1.05fr]">
-            <div className="glass rounded-[2rem] p-6 shadow-lift">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
-                <BarChart3 className="h-4 w-4 text-accent" /> ROI calculator
+            <div className="panel-soft rounded-[2rem] p-6">
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-champagne">
+                <BarChart3 className="h-4 w-4 text-accent" /> Interactive Enterprise ROI Calculator
               </div>
-              <h3 className="mt-2 font-serif text-3xl text-slate-900">Make the business case</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                Adjust the assumptions to your firm. The calculator uses Team pricing up to 25 seats, Business pricing above that, and a conservative 60% onboarding-time recovery.
-              </p>
+              <h3 className="mt-2 font-serif text-3xl text-white">Quantify Knowledge Preservation</h3>
               <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                <NumberField label="Team size" value={teamSize} onChange={setTeamSize} min={5} max={100} step={1} suffix=" people" />
+                <NumberField label="Engineering / Advisory team" value={teamSize} onChange={setTeamSize} min={5} max={100} step={1} suffix=" seats" />
                 <NumberField label="Blended hourly cost" value={hourlyRate} onChange={setHourlyRate} min={25} max={250} step={5} prefix="$" suffix="/hr" />
                 <NumberField label="Hours saved / person / week" value={hoursSaved} onChange={setHoursSaved} min={1} max={10} step={0.5} suffix=" hrs" />
-                <NumberField label="Current onboarding" value={onboardingWeeks} onChange={setOnboardingWeeks} min={1} max={12} step={1} suffix=" wks" />
-                <NumberField label="New client leads / year" value={newHires} onChange={setNewHires} min={1} max={20} step={1} suffix=" hires" />
-                <div className="flex items-center rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 text-xs text-slate-500">
-                  <Zap className="mr-2 h-4 w-4 text-champagne" />
-                  Every additional connected source makes the memory more valuable.
+                <NumberField label="Current handover ramp" value={onboardingWeeks} onChange={setOnboardingWeeks} min={1} max={12} step={1} suffix=" wks" />
+                <NumberField label="Retirements / transitions / yr" value={newHires} onChange={setNewHires} min={1} max={20} step={1} suffix=" people" />
+                <div className="flex items-center rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-xs text-white/60">
+                  <Zap className="mr-2 h-4 w-4 shrink-0 text-champagne" />
+                  Every connected source compounds institutional memory value.
                 </div>
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-[2rem] bg-slate-950 p-6 text-white shadow-lift">
-              <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-accent/30 blur-3xl" />
-              <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-champagne/20 blur-3xl" />
-              <div className="relative">
-                <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/50">Annual impact at current plan pricing</div>
-                <div className="mt-3 font-serif text-5xl">{money(roi.totalValue)}</div>
-                <div className="mt-1 text-sm text-white/60">recovered value across productivity and onboarding</div>
-                <div className="mt-6 grid grid-cols-3 gap-3">
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
-                    <div className="text-[10px] uppercase tracking-[0.16em] text-white/45">Plan cost</div>
-                    <div className="mt-1 font-mono text-lg">{money(roi.annualCost)}</div>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
-                    <div className="text-[10px] uppercase tracking-[0.16em] text-white/45">ROI</div>
-                    <div className="mt-1 font-mono text-lg text-emerald-300">{roi.multiple.toFixed(1)}x</div>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-3">
-                    <div className="text-[10px] uppercase tracking-[0.16em] text-white/45">Payback</div>
-                    <div className="mt-1 font-mono text-lg">{Math.max(1, Math.ceil(roi.paybackWeeks))} wks</div>
+            <div className="relative overflow-hidden rounded-[2rem] border border-champagne/30 bg-gradient-to-br from-accent/20 via-[#0e1329] to-champagne/20 p-6">
+              <div className="text-[10px] font-semibold uppercase tracking-[0.22em] text-champagne">
+                Projected Annual Enterprise Impact
+              </div>
+              <div className="mt-3 font-serif text-5xl text-white">{money(roi.totalValue)}</div>
+              <div className="mt-1 text-sm text-white/65">
+                annual productivity &amp; retirement handover savings
+              </div>
+              <div className="mt-6 grid grid-cols-3 gap-3">
+                <div className="rounded-2xl border border-white/10 bg-black/35 p-3">
+                  <div className="text-[10px] uppercase tracking-[0.16em] text-white/45">Annual Plan</div>
+                  <div className="mt-1 font-mono text-lg text-white">{money(roi.annualCost)}</div>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-black/35 p-3">
+                  <div className="text-[10px] uppercase tracking-[0.16em] text-white/45">Net ROI</div>
+                  <div className="mt-1 font-mono text-lg text-emerald-300">{roi.multiple.toFixed(1)}x</div>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-black/35 p-3">
+                  <div className="text-[10px] uppercase tracking-[0.16em] text-white/45">Payback</div>
+                  <div className="mt-1 font-mono text-lg text-champagne">
+                    {Math.max(1, Math.ceil(roi.paybackWeeks))} wks
                   </div>
                 </div>
-                <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-4 text-xs leading-relaxed text-white/60">
-                  Assumes 48 working weeks, {teamSize} seats, and a 60% reduction in onboarding time. Actual results depend on source coverage and team adoption.
-                </div>
-                <button
-                  onClick={() => requestPlan("ROI review")}
-                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-sm font-medium text-slate-900 transition hover:bg-white/90"
-                >
-                  Get a custom ROI review <ArrowRight className="h-4 w-4" />
-                </button>
               </div>
-            </div>
-          </section>
-
-          <section id="pricing-trial" className="mt-14">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-champagne">Trial pack</div>
-                <h3 className="mt-2 font-serif text-4xl text-slate-900">Start with one client. Prove it in 14 days.</h3>
-                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">
-                  The trial pack is a paid Client Memory Audit, not a generic sandbox. We connect the sources, ingest the history, and show you what the firm forgot.
-                </p>
-              </div>
-              <div className="rounded-full border border-slate-200 bg-white/70 px-3 py-1.5 text-xs text-slate-500">
-                $3,000 · credited to annual
-              </div>
-            </div>
-
-            <div className="mt-6 grid gap-5 md:grid-cols-2">
-              <div className="glass rounded-[2rem] p-6 shadow-lift">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400">Self-serve</div>
-                    <h4 className="mt-1 font-serif text-2xl text-slate-900">Free 14-day trial</h4>
-                  </div>
-                  <div className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">No card</div>
-                </div>
-                <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                  For one person who wants to feel the memory layer before bringing it to a team.
-                </p>
-                <ul className="mt-5 space-y-2 text-sm text-slate-600">
-                  {["1 workspace", "3 connectors", "2,500 memories", "Semantic search + graph", "Provenance-backed answers", "Export anytime"].map((item) => (
-                    <li key={item} className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-500" /> {item}</li>
-                  ))}
-                </ul>
-                <button
-                  onClick={() => requestPlan("Free trial")}
-                  className="mt-6 w-full rounded-xl border border-slate-200 bg-white/80 px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-white"
-                >
-                  Start free trial
-                </button>
-              </div>
-
-              <div className="relative overflow-hidden rounded-[2rem] bg-slate-950 p-6 text-white shadow-lift">
-                <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-champagne/30 blur-3xl" />
-                <div className="relative">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/50">Paid pilot · best for teams</div>
-                      <h4 className="mt-1 font-serif text-2xl">Client Memory Audit</h4>
-                    </div>
-                    <div className="rounded-full border border-champagne/30 bg-champagne/15 px-3 py-1 text-xs font-medium text-champagne">14 days</div>
-                  </div>
-                  <div className="mt-4 flex items-end gap-2">
-                    <span className="font-serif text-5xl">$3,000</span>
-                    <span className="pb-1 text-sm text-white/50">one-time</span>
-                  </div>
-                  <p className="mt-3 text-sm leading-relaxed text-white/65">
-                    One client, three sources, up to 12 months of history. We deliver the findings, not a dashboard tour.
-                  </p>
-                  <ul className="mt-5 space-y-2 text-sm text-white/75">
-                    {[
-                      "Commitments + decisions report",
-                      "New-joiner handoff brief",
-                      "Client risk and open-loop map",
-                      "ROI review with your numbers",
-                      "Security and data-flow review",
-                      "Credited in full to annual",
-                    ].map((item) => (
-                      <li key={item} className="flex items-center gap-2"><Check className="h-4 w-4 text-emerald-300" /> {item}</li>
-                    ))}
-                  </ul>
-                  <button
-                    onClick={() => requestPlan("Client Memory Audit")}
-                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent to-champagne px-4 py-3 text-sm font-medium text-white transition hover:scale-[1.01]"
-                  >
-                    Book the audit <ArrowRight className="h-4 w-4" />
-                  </button>
-                  <div className="mt-3 text-center text-[11px] text-white/40">No obligation. Export or delete on request.</div>
-                </div>
-              </div>
+              <button
+                onClick={() => requestPlan("Custom Enterprise ROI Review")}
+                className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-accent to-champagne px-4 py-3 text-sm font-semibold text-white shadow-lg"
+              >
+                Export Custom ROI Brief <ArrowRight className="h-4 w-4" />
+              </button>
             </div>
           </section>
 
+          {/* Plans */}
           <section id="pricing-plans" className="mt-14">
             <div className="flex flex-wrap items-end justify-between gap-4">
               <div>
-                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-champagne">Paid plans</div>
-                <h3 className="mt-2 font-serif text-4xl text-slate-900">Pick the control level your firm needs.</h3>
-                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">
-                  Every paid plan includes the memory pipeline, provenance, client workspaces, and export/delete controls.
-                </p>
+                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-champagne">Pricing Tiers</div>
+                <h3 className="mt-1 font-serif text-4xl text-white">From Personal Legacy to Regulated Enterprise</h3>
               </div>
-              <div className="flex items-center gap-1 rounded-full border border-slate-200 bg-white/70 p-1">
+              <div className="flex items-center gap-1 rounded-full border border-white/15 bg-black/40 p-1">
                 <button
                   onClick={() => setBilling("monthly")}
-                  className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${billing === "monthly" ? "bg-slate-900 text-white" : "text-slate-600"}`}
+                  className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
+                    billing === "monthly" ? "bg-accent text-white" : "text-white/60"
+                  }`}
                 >
                   Monthly
                 </button>
                 <button
                   onClick={() => setBilling("annual")}
-                  className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${billing === "annual" ? "bg-slate-900 text-white" : "text-slate-600"}`}
+                  className={`rounded-full px-3 py-1.5 text-xs font-medium transition ${
+                    billing === "annual" ? "bg-gradient-to-r from-accent to-champagne text-white" : "text-white/60"
+                  }`}
                 >
-                  Annual · save 25%
+                  Annual · Save 25%
                 </button>
               </div>
             </div>
@@ -559,39 +435,38 @@ export default function PricingModal({ onClose, onOpenBattlecard }: Props) {
               {PLANS.map((plan) => (
                 <div
                   key={plan.id}
-                  className={`relative flex flex-col rounded-[1.8rem] border p-5 ${
+                  className={`relative flex flex-col justify-between rounded-[1.8rem] border p-5 ${
                     plan.featured
-                      ? "border-accent/30 bg-gradient-to-b from-white to-accent/5 shadow-lift"
-                      : "border-slate-200 bg-white/70"
+                      ? "border-champagne/50 bg-gradient-to-b from-accent/20 via-[#121735] to-champagne/15 shadow-2xl"
+                      : "border-white/10 bg-white/[0.04]"
                   }`}
                 >
-                  {plan.featured && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-accent to-champagne px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white">
-                      Most popular
+                  <div>
+                    {plan.featured && (
+                      <div className="mb-3 inline-block rounded-full bg-gradient-to-r from-accent to-champagne px-3 py-0.5 text-[9px] font-semibold uppercase tracking-widest text-white">
+                        Most Popular
+                      </div>
+                    )}
+                    <div className="text-base font-semibold text-white">{plan.name}</div>
+                    <div className="mt-2 flex items-end gap-1">
+                      <span className="font-serif text-4xl text-gradient-gold">{priceFor(plan)}</span>
+                      {!plan.free && !plan.custom && <span className="pb-1 text-xs text-white/50">/user/mo</span>}
                     </div>
-                  )}
-                  <div className="text-sm font-semibold text-slate-900">{plan.name}</div>
-                  <div className="mt-2 flex items-end gap-1">
-                    <span className="font-serif text-4xl text-slate-900">{priceFor(plan)}</span>
-                    {!plan.free && !plan.custom && <span className="pb-1 text-xs text-slate-500">/user/mo</span>}
+                    <p className="mt-2 text-xs leading-relaxed text-white/60">{plan.tagline}</p>
+                    <ul className="mt-4 space-y-2 text-xs text-white/75">
+                      {plan.features.map((feature) => (
+                        <li key={feature} className="flex items-start gap-2">
+                          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-400" /> {feature}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <div className="mt-1 text-[11px] text-slate-500">
-                    {plan.custom ? "annual contract" : plan.free ? "free forever" : billing === "annual" ? "billed annually" : "billed monthly"}
-                  </div>
-                  <p className="mt-3 text-xs leading-relaxed text-slate-600">{plan.tagline}</p>
-                  <ul className="mt-4 space-y-2 text-xs text-slate-600">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-2">
-                        <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500" /> {feature}
-                      </li>
-                    ))}
-                  </ul>
                   <button
                     onClick={() => requestPlan(`${plan.name} plan`)}
-                    className={`mt-5 w-full rounded-xl px-4 py-2.5 text-xs font-medium transition ${
+                    className={`mt-6 w-full rounded-xl px-4 py-2.5 text-xs font-semibold transition ${
                       plan.featured
-                        ? "bg-gradient-to-r from-accent to-champagne text-white shadow-sm hover:scale-[1.01]"
-                        : "border border-slate-200 bg-white/80 text-slate-700 hover:bg-white"
+                        ? "bg-gradient-to-r from-accent to-champagne text-white shadow-lg"
+                        : "border border-white/15 bg-white/10 text-white hover:bg-white/15"
                     }`}
                   >
                     {plan.cta}
@@ -599,135 +474,73 @@ export default function PricingModal({ onClose, onOpenBattlecard }: Props) {
                 </div>
               ))}
             </div>
+          </section>
 
-            <div className="mt-5 flex flex-wrap gap-2">
-              {INCLUDED.map((item) => (
-                <span key={item} className="rounded-full border border-slate-200 bg-white/60 px-3 py-1.5 text-[11px] text-slate-600">
-                  {item}
+          {/* MCP + Google AI Stack */}
+          <section className="mt-14 grid gap-6 lg:grid-cols-2">
+            <div className="panel-soft rounded-[2rem] p-6">
+              <div className="text-xs font-semibold uppercase tracking-[0.22em] text-champagne">
+                The MCP Distinction
+              </div>
+              <h3 className="mt-1 font-serif text-3xl text-white">MCP gives access. MemoryOS gives continuity.</h3>
+              <p className="mt-2 text-xs leading-relaxed text-white/65">
+                Connecting ChatGPT or Claude to tools via MCP gives a single user temporary query access. MemoryOS provides the persistent, permissioned, PII-redacted institutional memory layer underneath every agent.
+              </p>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <div className="rounded-xl border border-white/10 bg-black/35 p-3.5">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-white/80">
+                    <Globe className="h-3.5 w-3.5 text-white/40" /> Generic AI + MCP
+                  </div>
+                  <ul className="mt-2 space-y-1 text-[11px] text-white/50">
+                    <li>• Ephemeral per-user chat</li>
+                    <li>• No retirement handover twin</li>
+                    <li>• No firm-wide audit trail</li>
+                  </ul>
+                </div>
+                <div className="rounded-xl border border-champagne/30 bg-champagne/10 p-3.5">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-champagne">
+                    <Database className="h-3.5 w-3.5" /> MemoryOS
+                  </div>
+                  <ul className="mt-2 space-y-1 text-[11px] text-white/80">
+                    <li>• Persistent Living Knowledge Twin</li>
+                    <li>• Gemma 3 Edge PII redaction</li>
+                    <li>• 100% source-cited provenance</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="panel-soft rounded-[2rem] p-6">
+              <div className="text-xs font-semibold uppercase tracking-[0.22em] text-neural">
+                Google AI &amp; Cloud Run Ready
+              </div>
+              <h3 className="mt-1 font-serif text-3xl text-white">Powered by the Full Google AI Suite</h3>
+              <div className="mt-4 grid grid-cols-2 gap-2.5">
+                {(aiStatus?.stack || []).slice(0, 6).map((item: any) => (
+                  <div key={item.id} className="rounded-xl border border-white/10 bg-black/35 p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-white">{item.name}</span>
+                      <span className="rounded-full bg-emerald-400/15 px-2 py-0.5 text-[9px] text-emerald-300">
+                        {item.tier}
+                      </span>
+                    </div>
+                    <p className="mt-1 line-clamp-2 text-[10px] text-white/55">{item.role}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 flex flex-wrap items-center gap-4 text-[11px] text-white/50">
+                <span className="flex items-center gap-1">
+                  <Mail className="h-3.5 w-3.5 text-champagne" /> {SALES_EMAIL}
                 </span>
-              ))}
-            </div>
-          </section>
-
-          <section className="mt-14 rounded-[2rem] border border-slate-200 bg-white/60 p-6 shadow-lift">
-            <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-              <div>
-                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-champagne">The MCP question</div>
-                <h3 className="mt-2 font-serif text-4xl text-slate-900">MCP gives access. MemoryOS gives memory.</h3>
-                <p className="mt-3 text-sm leading-relaxed text-slate-600">
-                  ChatGPT and Claude with MCP can reach your tools. They do not give the firm a shared, permissioned, auditable memory system. Keep the assistant your team loves; put MemoryOS underneath it.
-                </p>
-                <div className="mt-5 rounded-2xl border border-accent/15 bg-gradient-to-br from-accent/10 to-champagne/10 p-4 text-xs leading-relaxed text-slate-600">
-                  MemoryOS can run as an MCP server. Your team keeps ChatGPT, Claude, or an internal agent — the firm keeps the memory, permissions, and audit trail.
-                </div>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl border border-slate-200 bg-white/70 p-4">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
-                    <Globe className="h-4 w-4 text-slate-400" /> ChatGPT / Claude + MCP
-                  </div>
-                  <ul className="mt-3 space-y-2 text-xs text-slate-600">
-                    <li>Great for individual access</li>
-                    <li>Per-user chat history</li>
-                    <li>No firm-wide audit trail</li>
-                    <li>Model-vendor memory silo</li>
-                    <li>Limited retention controls</li>
-                  </ul>
-                </div>
-                <div className="rounded-2xl bg-slate-950 p-4 text-white">
-                  <div className="flex items-center gap-2 text-sm font-semibold">
-                    <Database className="h-4 w-4 text-champagne" /> MemoryOS
-                  </div>
-                  <ul className="mt-3 space-y-2 text-xs text-white/70">
-                    <li>Shared firm-wide memory</li>
-                    <li>Client and workspace isolation</li>
-                    <li>Provenance + audit + retention</li>
-                    <li>Model-neutral by design</li>
-                    <li>Self-host on Enterprise</li>
-                  </ul>
-                </div>
+                <span className="flex items-center gap-1">
+                  <Lock className="h-3.5 w-3.5 text-emerald-400" /> Customer data never trains public models
+                </span>
+                <span className="flex items-center gap-1">
+                  <Briefcase className="h-3.5 w-3.5 text-neural" /> Built on Google Cloud Run
+                </span>
               </div>
             </div>
           </section>
-
-          <section className="mt-14 rounded-[2rem] border border-slate-200 bg-white/60 p-6 shadow-lift">
-            <div className="flex flex-wrap items-end justify-between gap-3">
-              <div>
-                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-champagne">Google AI stack</div>
-                <h3 className="mt-2 font-serif text-4xl text-slate-900">Built on Google AI, not locked to it.</h3>
-                <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-600">
-                  Gemini powers reasoning today. Vertex AI and Gemma are ready for enterprise controls. The platform can also sit underneath other assistants via MCP.
-                </p>
-              </div>
-              <span className={`rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] ${aiStatus?.gemini_configured ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
-                {aiStatus?.gemini_configured ? "Gemini configured" : "Gemini key pending"}
-              </span>
-            </div>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {(aiStatus?.stack || []).map((item: any) => (
-                <div key={item.id} className="rounded-2xl border border-slate-200 bg-white/70 p-4">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="text-sm font-semibold text-slate-900">{item.name}</div>
-                    <span className={`rounded-full px-2 py-0.5 text-[9px] font-medium uppercase tracking-wide ${item.configured ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
-                      {item.tier}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-600">{item.role}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="mt-14">
-            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-champagne">FAQ</div>
-            <h3 className="mt-2 font-serif text-4xl text-slate-900">The questions buyers actually ask.</h3>
-            <div className="mt-6 space-y-3">
-              {FAQS.map((faq) => (
-                <details key={faq.q} className="group rounded-2xl border border-slate-200 bg-white/70 px-5 py-4">
-                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-medium text-slate-900">
-                    {faq.q}
-                    <span className="text-slate-400 transition group-open:rotate-45">+</span>
-                  </summary>
-                  <p className="mt-3 max-w-4xl text-sm leading-relaxed text-slate-600">{faq.a}</p>
-                </details>
-              ))}
-            </div>
-          </section>
-
-          <section className="mt-14 overflow-hidden rounded-[2rem] bg-gradient-to-br from-accent via-[#6d5bd0] to-champagne p-8 text-white shadow-lift">
-            <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
-              <div>
-                <div className="text-xs font-semibold uppercase tracking-[0.22em] text-white/60">Start with one client</div>
-                <h3 className="mt-2 font-serif text-4xl">Find out what your firm forgot.</h3>
-                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/75">
-                  Bring one client, three sources, and 12 months of history. In 14 days you get a commitments report, a handoff brief, and a clear ROI number.
-                </p>
-              </div>
-              <div className="flex flex-col gap-2 sm:flex-row lg:flex-col">
-                <button
-                  onClick={() => requestPlan("Client Memory Audit")}
-                  className="flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-medium text-slate-900 transition hover:bg-white/90"
-                >
-                  Book the $3k audit <ArrowRight className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => requestPlan("Free trial")}
-                  className="rounded-xl border border-white/30 bg-white/10 px-5 py-3 text-sm font-medium text-white transition hover:bg-white/15"
-                >
-                  Start free trial
-                </button>
-              </div>
-            </div>
-            <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-white/15 pt-4 text-xs text-white/60">
-              <span className="flex items-center gap-1.5"><Mail className="h-3.5 w-3.5" /> {SALES_EMAIL}</span>
-              <span className="flex items-center gap-1.5"><Lock className="h-3.5 w-3.5" /> Your data is never used to train models</span>
-              <span className="flex items-center gap-1.5"><Briefcase className="h-3.5 w-3.5" /> Built for client-facing teams</span>
-            </div>
-          </section>
-
-          <div className="py-8 text-center text-xs text-slate-400">
-            MemoryOS · Business & Pricing · Plans are illustrative and configurable per deployment.
-          </div>
         </div>
       </div>
     </motion.div>

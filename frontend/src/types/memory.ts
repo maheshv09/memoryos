@@ -18,9 +18,14 @@ export interface Memory {
   emotional_tone: string;
   cognitive_traits: string[];
   source_type: string;
+  source_connector?: string | null;
   source_label?: string | null;
   created_at: string;
   vector: number[];
+  entities?: string[];
+  quality_score?: number;
+  redacted?: boolean;
+  duplicate_of?: string | null;
   metadata: Record<string, unknown>;
 }
 
@@ -65,4 +70,18 @@ export interface MemoryCitation {
   title: string;
   year: number;
   score?: number | null;
+  category?: string;
+}
+
+export interface DecisionSimulationResult {
+  verdict: string;
+  confidence: number;
+  principles: string[];
+  risks_3am: string[];
+  action_plan: string[];
+  handover_note: string;
+  provider?: string;
+  model?: string;
+  citations?: MemoryCitation[];
+  active_ids?: string[];
 }

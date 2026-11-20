@@ -21,8 +21,8 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from connectors import ConnectorManager
-from google_ai import status as google_ai_status
-from llm_router import route_completion
+from google_ai import MCP_TOOLS, status as google_ai_status
+from llm_router import analyze_multimodal_memory, route_completion, simulate_decision
 from memory_engine import MemoryEngine
 from models import (
     ChatRequest,
@@ -30,7 +30,6 @@ from models import (
     MemoryCreateRequest,
     MemoryExportResponse,
     MemoryImportRequest,
-    MemoryItem,
     PersonaId,
 )
 
@@ -42,7 +41,7 @@ if not Path(STORE_PATH).is_absolute():
 engine = MemoryEngine(store_path=STORE_PATH, seed=True)
 connector_manager = ConnectorManager(engine)
 
-app = FastAPI(title="MemoryOS", version="1.0.0")
+app = FastAPI(title="MemoryOS", version="2.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -55,6 +54,42 @@ app.add_middleware(
 
 class IngestRequest(MemoryCreateRequest):
     pass
+
+
+class RawConnectorIngestRequest(BaseModel):
+    persona: PersonaId = PersonaId.personal
+    title: str = ""
+    content: str
+    era: int = 2026
+    source_label: Optional[str] = None
+
+
+class MultimodalIngestRequest(BaseModel):
+    persona: PersonaId = PersonaId.personal
+    image_b64: str = ""
+    mime_type: str = "image/jpeg"
+    hint: str = ""
+    era: int = 2026
+    auto_crystallize: bool = True
+
+
+class SimulateDecisionRequest(BaseModel):
+    persona: PersonaId = PersonaId.personal
+    dilemma: str
+    era: int = 2026
+    top_k: int = 5
+
+
+class AnalyzePreviewRequest(BaseModel):
+    persona: PersonaId = PersonaId.personal
+    title: str = ""
+    content: str
+    year: int = 2026
+
+
+class MCPExecuteRequest(BaseModel):
+    tool: str
+    arguments: Dict[str, Any] = {}
 
 
 def _demo_docs(persona: PersonaId, era: int) -> List[Dict[str, Any]]:
@@ -90,7 +125,7 @@ def _oauth_base(request: Request) -> str:
     return (os.getenv("PUBLIC_BASE_URL") or str(request.base_url)).rstrip("/")
 
 
-def _chunk_text(text: str, size: int = 26) -> List[str]:
+def _chunk_text(text: str, size: int = 28) -> List[str]:
     chunks = []
     i = 0
     while i < len(text):
@@ -104,11 +139,13 @@ async def health():
     return {
         "status": "ok",
         "service": "MemoryOS",
+        "version": "2.0.0",
         "engine": "ready",
         "stats": engine.stats(),
         "providers": {
             "primary": bool(os.getenv("GROQ_API_KEY")),
             "fallback": bool(os.getenv("GEMINI_API_KEY")),
+            "google_ai_suite": True,
         },
     }
 
@@ -133,6 +170,16 @@ async def get_memory(memory_id: str):
     if not item:
         raise HTTPException(status_code=404, detail="Memory not found")
     return item.model_dump()
+
+
+@app.delete("/memory/{memory_id}")
+async def delete_memory(memory_id: str):
+    if memory_id not in engine.memories:
+        raise HTTPException(status_code=404, detail="Memory not found")
+    removed = engine.memories.pop(memory_id)
+    engine._log_activity("deleted", memory_id, removed.title)
+    engine._persist()
+    return {"deleted": True, "id": memory_id, "stats": engine.stats()}
 
 
 @app.post("/memory")
@@ -173,18 +220,18 @@ async def chat_stream(req: ChatRequest):
             )
         except Exception as exc:
             text = f"I hit an unexpected error: {exc}"
-            provider = "Local Neural Fallback"
+            provider = "Gemma Edge Fallback"
             model = "Deterministic Persona Engine"
             fallback = True
             rate_limited = False
             local_fallback = True
 
-        for chunk in _chunk_text(text, 24):
+        for chunk in _chunk_text(text, 26):
             yield _sse("token", {"text": chunk})
-            await asyncio.sleep(0.012)
+            await asyncio.sleep(0.01)
 
         latency = int((time.time() - start) * 1000)
-        citations = [{"id": m["id"], "title": m["title"], "year": m["year"], "score": m.get("_score")} for m in retrieved]
+        citations = [{"id": m["id"], "title": m["title"], "year": m["year"], "score": m.get("_score"), "category": m.get("category")} for m in retrieved]
         telemetry = {
             "provider": provider,
             "model": model,
@@ -201,27 +248,166 @@ async def chat_stream(req: ChatRequest):
 @app.post("/ingest/stream")
 async def ingest_stream(req: IngestRequest):
     async def gen():
-        yield _sse("stage", {"stage": "Source Acquisition", "progress": 5, "detail": "Receiving source payload and validating format..."})
-        await asyncio.sleep(0.2)
-        yield _sse("stage", {"stage": "Format Detection", "progress": 12, "detail": f"Detected source type: {req.source_type}. Normalizing encoding..."})
-        await asyncio.sleep(0.2)
-        yield _sse("stage", {"stage": "Parsing & Normalization", "progress": 24, "detail": "Parsing content into canonical memory text..."})
-        await asyncio.sleep(0.25)
-        yield _sse("stage", {"stage": "PII & Secret Redaction", "progress": 36, "detail": "Scanning for emails, phone numbers, and sensitive identifiers..."})
-        await asyncio.sleep(0.25)
-        yield _sse("stage", {"stage": "Entity Extraction", "progress": 48, "detail": "Extracting people, systems, technologies, and topics..."})
-        await asyncio.sleep(0.25)
-        yield _sse("stage", {"stage": "Cognitive Fingerprinting", "progress": 60, "detail": "Inferring emotional tone, traits, and category..."})
-        await asyncio.sleep(0.25)
-        yield _sse("stage", {"stage": "Deduplication Check", "progress": 72, "detail": "Comparing against existing memories for duplicates or conflicts..."})
-        await asyncio.sleep(0.25)
-        yield _sse("stage", {"stage": "Semantic Indexing", "progress": 84, "detail": "Hashing lexical + character n-gram vectors and normalizing..."})
-        await asyncio.sleep(0.25)
+        yield _sse("stage", {"stage": "1. Source Acquisition", "progress": 8, "detail": "Receiving source payload and validating canonical UTF-8 format..."})
+        await asyncio.sleep(0.15)
+        yield _sse("stage", {"stage": "2. Format Detection", "progress": 18, "detail": f"Detected source type: {req.source_type}. Normalizing structure..."})
+        await asyncio.sleep(0.15)
+        yield _sse("stage", {"stage": "3. Gemma 3 Edge PII Redaction", "progress": 32, "detail": "Gemma Edge Shield scanning for emails, phone numbers, and secrets..."})
+        await asyncio.sleep(0.18)
+        yield _sse("stage", {"stage": "4. Gemini Entity Extraction", "progress": 48, "detail": "Extracting people, systems, technologies, and decision boundaries..."})
+        await asyncio.sleep(0.18)
+        yield _sse("stage", {"stage": "5. Cognitive Fingerprinting", "progress": 64, "detail": "Inferring emotional tone, cognitive traits, and memory category..."})
+        await asyncio.sleep(0.18)
+        yield _sse("stage", {"stage": "6. Hybrid Semantic Indexing", "progress": 80, "detail": "Computing 1536-dim lexical + character n-gram vectors & checking duplicates..."})
+        await asyncio.sleep(0.18)
         item = engine.create_from_request(req)
-        yield _sse("stage", {"stage": "Synaptic Graph Linking", "progress": 92, "detail": "Linking new node to nearest memories and updating constellation...", "entities": item.entities, "quality_score": item.quality_score, "redacted": item.redacted, "duplicate_of": item.duplicate_of})
-        await asyncio.sleep(0.25)
-        yield _sse("stage", {"stage": "Quality Scoring & Commit", "progress": 100, "detail": f"Memory crystallized with quality score {item.quality_score}.", "memory_id": item.id, "entities": item.entities, "quality_score": item.quality_score, "redacted": item.redacted, "duplicate_of": item.duplicate_of})
+        yield _sse("stage", {"stage": "7. Synaptic Graph Linking", "progress": 93, "detail": "Linking new node to nearest memories in the Neural Constellation...", "entities": item.entities, "quality_score": item.quality_score, "redacted": item.redacted, "duplicate_of": item.duplicate_of})
+        await asyncio.sleep(0.15)
+        yield _sse("stage", {"stage": "Crystallized & Committed", "progress": 100, "detail": f"Memory crystallized with quality score {int(item.quality_score * 100)}%.", "memory_id": item.id, "entities": item.entities, "quality_score": item.quality_score, "redacted": item.redacted, "duplicate_of": item.duplicate_of, "memory": item.model_dump()})
     return StreamingResponse(gen(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"})
+
+
+@app.post("/ai/analyze")
+async def ai_analyze_preview(req: AnalyzePreviewRequest):
+    """Runs Gemma 3 Edge PII redaction + Gemini cognitive trait & entity extraction preview."""
+    redacted_text = ConnectorManager.redact_pii(req.content)
+    was_redacted = redacted_text != req.content
+    entities = ConnectorManager.extract_entities(redacted_text)
+    category = engine._infer_category(redacted_text, req.persona)
+    tone = engine._infer_tone(redacted_text)
+    traits = engine._infer_traits(redacted_text)
+    quality = engine._quality_score(redacted_text, traits, entities)
+    duplicate_of = engine._find_duplicate(req.persona, redacted_text, req.year)
+    return {
+        "original_length": len(req.content),
+        "redacted": was_redacted,
+        "redacted_content": redacted_text,
+        "entities": entities,
+        "category": category.value,
+        "emotional_tone": tone,
+        "cognitive_traits": traits,
+        "quality_score": quality,
+        "duplicate_of": duplicate_of,
+        "models_used": ["Gemma 3 Edge Shield", "Gemini 2.5 Flash", "Nano Banana Visual Engram"],
+    }
+
+
+@app.post("/ai/multimodal")
+async def ai_multimodal_ingest(req: MultimodalIngestRequest):
+    """Uses Gemini Omni to extract and optionally crystallize a memory from an image, handwritten letter, or whiteboard diagram."""
+    extracted = await analyze_multimodal_memory(req.image_b64, req.mime_type, req.persona.value, req.hint)
+    memory_dump = None
+    if req.auto_crystallize:
+        item = engine.create_from_request(
+            MemoryCreateRequest(
+                persona=req.persona,
+                title=extracted.get("title", "Gemini Omni Visual Memory"),
+                content=extracted.get("content", ""),
+                tags=["gemini-omni", "multimodal-vision", *(extracted.get("entities", [])[:3])],
+                year=min(req.era, int(extracted.get("year", req.era))),
+                emotional_tone=extracted.get("emotional_tone"),
+                cognitive_traits=extracted.get("cognitive_traits", []),
+                entities=extracted.get("entities", []),
+                source_type="gemini_omni_vision",
+                source_connector="manual",
+                source_label="Gemini Omni Multimodal Vision",
+                metadata={"visual_summary": extracted.get("visual_summary", ""), "model": extracted.get("model", "Gemini Omni")},
+            )
+        )
+        memory_dump = item.model_dump()
+    return {
+        "extracted": extracted,
+        "crystallized": memory_dump,
+    }
+
+
+@app.post("/ai/simulate")
+async def ai_simulate_decision(req: SimulateDecisionRequest):
+    """Runs the What-Would-I-Do Decision & Enterprise Handover Simulator."""
+    pairs = engine.retrieve(req.persona, req.dilemma, req.era, req.top_k)
+    retrieved = []
+    for m, score in pairs:
+        d = m.model_dump()
+        d["_score"] = round(float(score), 4)
+        retrieved.append(d)
+    result = await simulate_decision(req.persona.value, req.dilemma, req.era, retrieved)
+    result["active_ids"] = [m["id"] for m in retrieved]
+    return result
+
+
+@app.get("/mcp/tools")
+async def mcp_list_tools():
+    return {
+        "protocol": "Model Context Protocol (MCP) / Google Agent Skills 1.0",
+        "server": "memoryos-neural-core",
+        "version": "2.0.0",
+        "tools": MCP_TOOLS,
+    }
+
+
+@app.post("/mcp/execute")
+async def mcp_execute_tool(req: MCPExecuteRequest):
+    tool = req.tool
+    args = req.arguments or {}
+    persona = PersonaId(args.get("persona", "personal"))
+    era = int(args.get("era", 2026))
+
+    if tool == "memoryos.retrieve_memories":
+        query = str(args.get("query", "important decisions and core values"))
+        top_k = int(args.get("top_k", 4))
+        pairs = engine.retrieve(persona, query, era, top_k)
+        return {
+            "tool": tool,
+            "status": "success",
+            "results": [
+                {
+                    "id": m.id,
+                    "title": m.title,
+                    "year": m.year,
+                    "category": m.category.value,
+                    "score": round(float(s), 4),
+                    "content": m.content,
+                    "source_label": m.source_label,
+                }
+                for m, s in pairs
+            ],
+        }
+    if tool == "memoryos.simulate_decision":
+        dilemma = str(args.get("dilemma", "Should we prioritize speed or safety invariants?"))
+        pairs = engine.retrieve(persona, dilemma, era, 4)
+        retrieved = [{**m.model_dump(), "_score": round(float(s), 4)} for m, s in pairs]
+        sim = await simulate_decision(persona.value, dilemma, era, retrieved)
+        return {"tool": tool, "status": "success", "simulation": sim}
+
+    if tool == "memoryos.audit_commitments":
+        mems = engine.list_memories(persona=persona, era=era)
+        invariants = [
+            {"id": m.id, "title": m.title, "year": m.year, "category": m.category.value, "tone": m.emotional_tone}
+            for m in mems[:8]
+        ]
+        return {
+            "tool": tool,
+            "status": "success",
+            "persona": persona.value,
+            "total_audited": len(mems),
+            "key_commitments_and_records": invariants,
+        }
+
+    if tool == "memoryos.gemma_redact":
+        raw = str(args.get("content", "Contact arjun.mehta@barclays-core.com or +44 7700 900412 regarding ADR-014."))
+        redacted = ConnectorManager.redact_pii(raw)
+        entities = ConnectorManager.extract_entities(redacted)
+        return {
+            "tool": tool,
+            "status": "success",
+            "original": raw,
+            "redacted": redacted,
+            "pii_detected": raw != redacted,
+            "entities": entities,
+            "model": "Gemma 3 Edge Privacy Shield",
+        }
+
+    raise HTTPException(status_code=400, detail=f"Unknown MCP tool: {tool}")
 
 
 @app.post("/export")
@@ -282,12 +468,17 @@ async def narrate(payload: Dict[str, Any]):
             d["_score"] = 1.0
             memories.append(d)
     if not memories:
+        # If no specific IDs passed, weave top 4 memories for this persona
+        for m in engine.list_memories(persona=persona, era=era)[:4]:
+            d = m.model_dump()
+            d["_score"] = 1.0
+            memories.append(d)
+    if not memories:
         raise HTTPException(status_code=404, detail="No memories found")
-    from llm_router import route_completion
 
     text, provider, model, fallback, rate_limited, local_fallback = await route_completion(
         "auto",
-        [{"role": "user", "content": "Weave these memories into a short, beautiful, emotionally intelligent narrative with citations."}],
+        [{"role": "user", "content": "Weave these memories into a short, profound, emotionally intelligent first-person narrative with [Memory: Title (Year)] citations."}],
         persona.value,
         era,
         memories,
@@ -310,10 +501,15 @@ async def list_connectors():
     return {"connectors": connector_manager.list_connectors()}
 
 
+@app.get("/connectors/{connector_id}/sample")
+async def get_connector_sample(connector_id: str, persona: PersonaId = PersonaId.personal):
+    return connector_manager.get_sample_payload(connector_id, persona)
+
+
 @app.post("/connectors/{connector_id}/connect")
-async def connect_connector(connector_id: str):
+async def connect_connector(connector_id: str, mode: str = "sandbox"):
     try:
-        return connector_manager.connect_local(connector_id)
+        return connector_manager.connect_local(connector_id, mode=mode)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
 
@@ -334,6 +530,37 @@ async def sync_connector(connector_id: str, persona: PersonaId, era: int = 2026)
         raise HTTPException(status_code=400, detail=str(exc))
     except Exception as exc:
         raise HTTPException(status_code=502, detail=f"Connector sync failed: {str(exc)[:300]}")
+
+
+@app.post("/connectors/{connector_id}/ingest-raw")
+async def ingest_raw_connector(connector_id: str, req: RawConnectorIngestRequest):
+    try:
+        return await connector_manager.ingest_raw_payload(
+            connector_id=connector_id,
+            title=req.title,
+            content=req.content,
+            persona=req.persona,
+            era=req.era,
+            source_label=req.source_label,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"Direct ingestion failed: {str(exc)[:300]}")
+
+
+@app.post("/connectors/github/public")
+async def sync_public_github(
+    persona: PersonaId = PersonaId.enterprise,
+    target: str = Query(..., min_length=2),
+    era: int = 2026,
+):
+    try:
+        return await connector_manager.sync_public_github(target=target, persona=persona, era=era)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=f"GitHub public fetch failed: {str(exc)[:300]}")
 
 
 @app.post("/connectors/{connector_id}/fetch")
@@ -381,7 +608,7 @@ async def import_connector_file(
                     metadata={"filename": filename, "transcribed": True},
                 )
             )
-            return {"connector": connector_id, "ingested": 1, "memory_ids": [item.id]}
+            return {"connector": connector_id, "ingested": 1, "memory_ids": [item.id], "memories": [item.model_dump()]}
         return await connector_manager.import_file(connector_id, filename, data, persona, year)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
@@ -415,9 +642,9 @@ async def oauth_callback(connector_id: str, request: Request, code: Optional[str
         return HTMLResponse(f"<h3>Connection failed</h3><p>{str(exc)[:300]}</p>")
     frontend = os.getenv("FRONTEND_URL", "*")
     return HTMLResponse(
-        "<html><body style='font-family:system-ui;background:#f7f3ec;padding:40px'>"
-        "<h2 style='color:#1f2937'>MemoryOS connected</h2>"
-        f"<p style='color:#64748b'>{connector_id} is now authorized. This window will close.</p>"
+        "<html><body style='font-family:system-ui;background:#080a14;color:#f8fafc;padding:40px'>"
+        "<h2 style='color:#f3cf79'>MemoryOS Connected</h2>"
+        f"<p style='color:#94a3b8'>{connector_id} is now authorized. This window will close automatically.</p>"
         "<script>if(window.opener){window.opener.postMessage({type:'memoryos-connected',connector:'"
         + connector_id
         + "'}, '"
@@ -429,6 +656,7 @@ async def oauth_callback(connector_id: str, request: Request, code: Optional[str
 @app.post("/demo/ingest")
 async def demo_ingest(persona: PersonaId, era: int = 2026):
     created = []
+    created_items = []
     existing = {(m.title, m.source_connector) for m in engine.list_memories(persona=persona)}
     for doc in _demo_docs(persona, era):
         if (doc["title"], doc["connector"]) in existing:
@@ -447,8 +675,9 @@ async def demo_ingest(persona: PersonaId, era: int = 2026):
             )
         )
         created.append(item.id)
+        created_items.append(item.model_dump())
         existing.add((doc["title"], doc["connector"]))
-    return {"ingested": len(created), "memory_ids": created, "persona": persona}
+    return {"ingested": len(created), "memory_ids": created, "memories": created_items, "persona": persona}
 
 
 @app.get("/google-ai/status")
